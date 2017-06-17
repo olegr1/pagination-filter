@@ -57,12 +57,14 @@
         //(Re-)generate pagination links
         let itemsHtml = "";
 
-        for (let j = 0; j < pageCount; j++) {
-            let currentLinkClass = (j === currentPage) ? 'class="active"' : '';
+        if (pageCount > 1) { 
+            for (let j = 0; j < pageCount; j++) {
+                let currentLinkClass = (j === currentPage) ? 'class="active"' : '';
 
-            itemsHtml += '  <li>' +
-                                '<a ' + currentLinkClass + ' href="#">' + (j + 1) + '</a>'
-                            '<li>';
+                itemsHtml += '  <li>' +
+                                    '<a ' + currentLinkClass + ' href="#">' + (j + 1) + '</a>'
+                                '<li>';
+            }            
         }
 
         pagination.innerHTML = itemsHtml;
