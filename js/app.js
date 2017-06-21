@@ -1,5 +1,5 @@
-//Wrapping code in IIFE to avoid polluting the global scope
-(() => {
+//Block-scope the code to avoid polluting the global scope
+{
     const STDUENTS_PER_PAGE = 10;
     const studentListOriginal = document.querySelectorAll(".student-list > .student-item");
 
@@ -10,12 +10,13 @@
     //Add the DOM elements needed for search and pagination
     createDynamicDomElements();
 
-    //Populate the dynamic list which the application uses
+    //Initially populate the dynamic student list which the application uses
+    //with the default state (not filtered by search)
     studentList = studentListOriginal;
 
     //Start the code
     paginateStudentList(0);
-    
+
     //Figure out which part of the list to show based on the selected page
     function paginateStudentList(currentPage) {
 
@@ -32,7 +33,7 @@
         updateView(pageCount, currentPage, studentIndexRange);
     }
 
-    //Update the HTML page
+    //Update the HTML
     function updateView(pageCount, currentPage, rangeToShow) {
 
         //Hide all students by default
@@ -40,7 +41,7 @@
             studentListOriginal[i].style.display = "none";
         }
 
-        //Show students on current page
+        //Show students belonging to the current page current page
         for (let t = 0; t < studentList.length; t++) {
             if (t >= rangeToShow.start && t <= rangeToShow.end) {
                 studentList[t].style.display = "block";
@@ -57,21 +58,21 @@
         //(Re-)generate pagination links
         let itemsHtml = "";
 
-        if (pageCount > 1) { 
+        if (pageCount > 1) {
             for (let j = 0; j < pageCount; j++) {
                 let currentLinkClass = (j === currentPage) ? 'class="active"' : '';
 
                 itemsHtml += '  <li>' +
                                     '<a ' + currentLinkClass + ' href="#">' + (j + 1) + '</a>'
                                 '<li>';
-            }            
+            }
         }
 
         pagination.innerHTML = itemsHtml;
     }
 
 
-    //Look for a match for a provided string in students' names and emails
+    //Look for a match for the provided string in students' names and emails
     function filterStudentList(filterString) {
 
         let filteredStudentList = [];
@@ -103,11 +104,13 @@
         paginationContainer.appendChild(pagination);
         page.appendChild(paginationContainer);
 
+        //Handle pagination link clicks
         pagination.addEventListener("click", (event) => {
             //Cancel the effect of herf="#"
             event.preventDefault();
 
-            //If the clicked element is an anchor, parse the text inside it to number and call the pagination function
+            //If the clicked element is an anchor,
+            //parse the text inside it to number and call the pagination function
             if (event.target.tagName.toLowerCase() === "a") {
                 let pageNumber = parseInt(event.target.textContent) - 1;
                 paginateStudentList(pageNumber);
@@ -120,10 +123,11 @@
         search.setAttribute("class", "student-search");
         search.innerHTML = '<input placeholder="Search for students...">' +
                            ' <button>Search</button>';
-        
+
         pageHeader.appendChild(search);
         let searchInput = search.querySelector("input");
 
+        //Handle Search button clicks
         search.querySelector("button").addEventListener("click", (event) => {
             //First update the studentList value and run pagination and rendering on the result
             filterStudentList(searchInput.value);
@@ -135,4 +139,4 @@
         noMatchesMessage.textContent = 'No matches found';
         page.appendChild(noMatchesMessage);
     }
-})();
+}
